@@ -1,6 +1,7 @@
 name: fiesta-sst-healpix
 channels:
   - conda-forge
+  - pytorch
   - bioconda
   - defaults
 dependencies:
