@@ -26,6 +26,10 @@ jobs:
           init-shell: bash
           cache-environment: true
 
+      - name: Login to Copernicus Marine
+        shell: micromamba-shell {0}
+        run: copernicusmarine login --username "$COPERNICUSMARINE_SERVICE_USERNAME" --password "$COPERNICUSMARINE_SERVICE_PASSWORD" --skip-if-user-logged-in
+
       - name: Run experiment
         shell: micromamba-shell {0}
         run: |

@@ -40,6 +40,10 @@ jobs:
       - name: Install MyST
         run: npm install -g mystmd
 
+      - name: Login to Copernicus Marine
+        shell: micromamba-shell {0}
+        run: copernicusmarine login --username "$COPERNICUSMARINE_SERVICE_USERNAME" --password "$COPERNICUSMARINE_SERVICE_PASSWORD" --skip-if-user-logged-in
+
       - name: Execute notebook
         shell: micromamba-shell {0}
         run: |
