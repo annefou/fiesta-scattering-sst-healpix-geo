@@ -260,33 +260,36 @@ def run_foscat(ellipsoid="sphere"):
     print(f"  Gap pixels:      {n_gap} ({100*n_gap/n_ocean:.1f}%)")
 
     # --- 2. Spherical-harmonics baseline for gaps ---
+    ocean_mean = np.nanmean(hp_l4[ocean])
+
     hp_start = hp_l3s.copy()
-    # Fill NaN with 0 for alm computation
-    hp_for_alm = np.where(np.isnan(hp_start), 0.0, hp_start)
+    # Fill NaN with ocean mean for alm computation
+    hp_for_alm = np.where(np.isnan(hp_start), ocean_mean, hp_start)
 
     alm = hp.map2alm(hp_for_alm, lmax=LMAX)
     baseline = hp.alm2map(alm, NSIDE, verbose=False)
 
     # Use baseline to fill gap pixels as initial guess
     hp_start[clouds] = baseline[clouds]
-    # Set non-ocean pixels to 0
-    hp_start[~ocean] = 0.0
+    # Set non-ocean pixels to ocean mean (not 0 — SST is ~270-304 K)
+    hp_start[~ocean] = ocean_mean
+    hp_start[np.isnan(hp_start)] = ocean_mean
 
     print(f"  Spherical-harmonics baseline computed (LMAX={LMAX})")
 
     # --- 3. FOSCAT synthesis ---
-    # Compute scattering covariance of reference (L4)
+    # Prepare L4 reference: fill non-ocean with ocean mean
     hp_l4_clean = hp_l4.copy()
-    hp_l4_clean[np.isnan(hp_l4_clean)] = 0.0
+    hp_l4_clean[~ocean | np.isnan(hp_l4_clean)] = ocean_mean
 
-    scat_op = sc.funct(NORIENT=4, KERNELSZ=3, all_type="float64", silent=True)
+    scat_op = sc.funct(NORIENT=4, KERNELSZ=3, all_type="float32", silent=True)
 
-    data = hp_start.reshape(1, NPIX).astype(np.float64)
-    mask_ocean = ocean.reshape(1, NPIX).astype(np.float64)
+    data = hp_start.reshape(1, NPIX).astype(np.float32)
+    mask_ocean = ocean.reshape(1, NPIX).astype(np.float32)
 
     # Reference from L4 gap-free product
     ref, sref = scat_op.eval(
-        hp_l4_clean.reshape(1, NPIX).astype(np.float64),
+        hp_l4_clean.reshape(1, NPIX).astype(np.float32),
         mask=mask_ocean, calc_var=True
     )
 
@@ -300,7 +303,7 @@ def run_foscat(ellipsoid="sphere"):
     loss = synth.Loss(The_loss, scat_op, ref, mask_const, sref)
     sy = synth.Synthesis([loss])
 
-    mask_clouds_t = scat_op.backend.bk_cast(clouds.reshape(1, NPIX).astype(np.float64))
+    mask_clouds_t = scat_op.backend.bk_cast(clouds.reshape(1, NPIX).astype(np.float32))
 
     omap = sy.run(scat_op.backend.bk_cast(data), EVAL_FREQUENCY=max(NSTEPS//10, 1),
                   grd_mask=mask_clouds_t, NUM_EPOCHS=NSTEPS, do_lbfgs=True)
