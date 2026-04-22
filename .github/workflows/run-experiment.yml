@@ -37,7 +37,7 @@ jobs:
         shell: micromamba-shell {0}
         run: |
           jupytext --to notebook 01_sphere_vs_wgs84.py
-          jupyter execute 01_sphere_vs_wgs84.ipynb
+          jupyter execute --inplace 01_sphere_vs_wgs84.ipynb
 
       - name: Upload results
         uses: actions/upload-artifact@v4
