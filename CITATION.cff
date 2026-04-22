@@ -12,7 +12,8 @@ authors:
     affiliation: "CNRS / APC"
 repository-code: "https://github.com/annefou/fiesta-scattering-sst-healpix-geo"
 license: MIT
-date-released: "2026-04-14"
+version: "0.1.1"
+date-released: "2026-04-22"
 keywords:
   - sea-surface-temperature
   - gap-filling
