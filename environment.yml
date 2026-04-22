@@ -14,7 +14,8 @@ dependencies:
   - jupyter
   - nbclient
   - ipykernel
-  - pytorch-cpu=2.11
+  - pytorch
+  - cpuonly
   - snakemake
   - pip
   - pip:
