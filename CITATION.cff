@@ -12,7 +12,7 @@ authors:
     affiliation: "CNRS / APC"
 repository-code: "https://github.com/annefou/fiesta-scattering-sst-healpix-geo"
 license: MIT
-version: "0.1.1"
+version: "0.2.0"
 date-released: "2026-04-22"
 keywords:
   - sea-surface-temperature

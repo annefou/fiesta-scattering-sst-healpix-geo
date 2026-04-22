@@ -5,7 +5,7 @@
   "description": "Comparing SST gap-filling accuracy using standard HEALPix (sphere) versus WGS84 ellipsoid with FOSCAT scattering-transform synthesis.",
   "codeRepository": "https://github.com/annefou/fiesta-scattering-sst-healpix-geo",
   "license": "https://spdx.org/licenses/MIT.html",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "dateCreated": "2026-04-22",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
