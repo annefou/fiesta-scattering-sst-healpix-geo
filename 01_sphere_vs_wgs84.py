@@ -402,30 +402,19 @@ print(f"Results saved to {results_path}")
 vmin = np.nanmin(r_sphere["hp_l4"][r_sphere["gap_mask"]])
 vmax = np.nanmax(r_sphere["hp_l4"][r_sphere["gap_mask"]])
 
-fig = plt.figure(figsize=(16, 10))
+maps = [
+    (r_sphere["hp_l3s"], "L3S SST (with cloud gaps)"),
+    (r_sphere["hp_filled"], f"FOSCAT Sphere — RMSE = {r_sphere['rmse_mk']:.1f} mK"),
+    (r_wgs84["hp_filled"], f"FOSCAT WGS84 — RMSE = {r_wgs84['rmse_mk']:.1f} mK"),
+    (r_sphere["hp_l4"], "L4 Reference (gap-free)"),
+]
 
-hp.mollview(r_sphere["hp_l3s"], title="L3S SST (with cloud gaps)",
-            sub=(2, 2, 1), fig=fig, cmap="RdYlBu_r",
-            min=vmin, max=vmax, nest=True, hold=True)
-
-hp.mollview(r_sphere["hp_filled"],
-            title=f"FOSCAT Sphere\nRMSE = {r_sphere['rmse_mk']:.1f} mK",
-            sub=(2, 2, 2), fig=fig, cmap="RdYlBu_r",
-            min=vmin, max=vmax, nest=True, hold=True)
-
-hp.mollview(r_wgs84["hp_filled"],
-            title=f"FOSCAT WGS84\nRMSE = {r_wgs84['rmse_mk']:.1f} mK",
-            sub=(2, 2, 3), fig=fig, cmap="RdYlBu_r",
-            min=vmin, max=vmax, nest=True, hold=True)
-
-hp.mollview(r_sphere["hp_l4"], title="L4 Reference (gap-free)",
-            sub=(2, 2, 4), fig=fig, cmap="RdYlBu_r",
-            min=vmin, max=vmax, nest=True, hold=True)
-
-fig.subplots_adjust(hspace=0.3, wspace=0.05, top=0.92)
-fig.suptitle(f"SST Gap-Filling: Sphere vs WGS84 — {DATE}, NSIDE={NSIDE}", fontsize=14)
-fig.savefig(os.path.join("results", "comparison_maps.png"), dpi=150, bbox_inches="tight")
-plt.show()
+for data, title in maps:
+    hp.mollview(data, title=title, cmap="RdYlBu_r",
+                min=vmin, max=vmax, nest=True, unit="K")
+    plt.savefig(os.path.join("results", f"map_{title.split()[0].lower()}.png"),
+                dpi=150, bbox_inches="tight")
+    plt.show()
 
 # %% [markdown]
 # ## Comparison bar chart
