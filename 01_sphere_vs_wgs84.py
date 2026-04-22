@@ -308,6 +308,8 @@ def run_foscat(ellipsoid="sphere"):
     omap = sy.run(scat_op.backend.bk_cast(data), EVAL_FREQUENCY=max(NSTEPS//10, 1),
                   grd_mask=mask_clouds_t, NUM_EPOCHS=NSTEPS, do_lbfgs=True)
     hp_filled = np.array(omap).ravel() if not hasattr(omap, 'numpy') else omap.numpy().ravel()
+    # Mask land pixels as NaN for clean visualisation
+    hp_filled[~ocean] = np.nan
 
     elapsed = time.time() - t0
 
