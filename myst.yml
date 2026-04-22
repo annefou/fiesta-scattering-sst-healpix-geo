@@ -1,0 +1,31 @@
+version: 1
+
+project:
+  title: "SST Gap-Filling: Sphere vs WGS84 Ellipsoid on HEALPix"
+  authors:
+    - name: Anne Fouilloux
+      orcid: 0000-0002-1784-2920
+      affiliations:
+        - LifeWatch ERIC
+    - name: Jean-Marc Delouis
+      affiliations:
+        - CNRS / APC
+  github: https://github.com/annefou/fiesta-scattering-sst-healpix-geo
+  license: MIT
+  keywords:
+    - sea-surface-temperature
+    - gap-filling
+    - HEALPix
+    - WGS84
+    - scattering-transform
+    - FOSCAT
+  bibliography: []
+  toc:
+    - file: index.md
+    - file: 01_sphere_vs_wgs84.py
+
+site:
+  title: "SST Gap-Filling: Sphere vs WGS84"
+  actions:
+    - title: GitHub
+      url: https://github.com/annefou/fiesta-scattering-sst-healpix-geo

@@ -1,0 +1,77 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "name": "SST Gap-Filling: Sphere vs WGS84 Ellipsoid on HEALPix",
+  "description": "Comparing SST gap-filling accuracy using standard HEALPix (sphere) versus WGS84 ellipsoid with FOSCAT scattering-transform synthesis.",
+  "codeRepository": "https://github.com/annefou/fiesta-scattering-sst-healpix-geo",
+  "license": "https://spdx.org/licenses/MIT.html",
+  "version": "0.1.0",
+  "dateCreated": "2026-04-14",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "Python",
+    "version": "3.11"
+  },
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Anne",
+      "familyName": "Fouilloux",
+      "@id": "https://orcid.org/0000-0002-1784-2920",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "LifeWatch ERIC"
+      }
+    },
+    {
+      "@type": "Person",
+      "givenName": "Jean-Marc",
+      "familyName": "Delouis",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "CNRS / APC"
+      }
+    }
+  ],
+  "funder": {
+    "@type": "Organization",
+    "name": "FIESTA-OSCARS"
+  },
+  "softwareRequirements": [
+    "numpy",
+    "healpy",
+    "copernicusmarine",
+    "healpix-resample",
+    "healpix-geo",
+    "foscat",
+    "scikit-learn",
+    "xarray",
+    "matplotlib"
+  ],
+  "referencePublication": {
+    "@type": "ScholarlyArticle",
+    "name": "Scattering transform applied to CMB component separation",
+    "author": "Jean-Marc Delouis",
+    "datePublished": "2022",
+    "isPartOf": {
+      "@type": "PublicationIssue",
+      "isPartOf": {
+        "@type": "PublicationVolume",
+        "volumeNumber": "668",
+        "isPartOf": {
+          "@type": "Periodical",
+          "name": "Astronomy & Astrophysics"
+        }
+      }
+    },
+    "@id": "https://doi.org/10.1051/0004-6361/202244566"
+  },
+  "keywords": [
+    "sea-surface-temperature",
+    "gap-filling",
+    "HEALPix",
+    "WGS84",
+    "scattering-transform",
+    "FOSCAT"
+  ]
+}

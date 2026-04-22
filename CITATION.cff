@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+title: "SST Gap-Filling: Sphere vs WGS84 Ellipsoid on HEALPix"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - given-names: Anne
+    family-names: Fouilloux
+    orcid: "https://orcid.org/0000-0002-1784-2920"
+    affiliation: "LifeWatch ERIC"
+  - given-names: Jean-Marc
+    family-names: Delouis
+    affiliation: "CNRS / APC"
+repository-code: "https://github.com/annefou/fiesta-scattering-sst-healpix-geo"
+license: MIT
+date-released: "2026-04-14"
+keywords:
+  - sea-surface-temperature
+  - gap-filling
+  - HEALPix
+  - WGS84
+  - scattering-transform
+  - FOSCAT
+  - Copernicus Marine
+references:
+  - type: article
+    title: "Scattering transform applied to CMB component separation"
+    authors:
+      - given-names: Jean-Marc
+        family-names: Delouis
+    journal: "Astronomy & Astrophysics"
+    volume: 668
+    pages: A122
+    year: 2022
+    doi: "10.1051/0004-6361/202244566"

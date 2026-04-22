@@ -1,0 +1,41 @@
+name: Run Experiment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    env:
+      CI_MODE: "1"
+      COPERNICUSMARINE_SERVICE_USERNAME: ${{ secrets.COPERNICUSMARINE_SERVICE_USERNAME }}
+      COPERNICUSMARINE_SERVICE_PASSWORD: ${{ secrets.COPERNICUSMARINE_SERVICE_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Micromamba
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: environment.yml
+          environment-name: fiesta-sst-healpix
+          cache-environment: true
+
+      - name: Run experiment
+        shell: bash -el {0}
+        run: |
+          jupytext --to notebook 01_sphere_vs_wgs84.py
+          jupyter execute 01_sphere_vs_wgs84.ipynb
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: experiment-results
+          path: |
+            results/comparison_results.json
+            results/comparison_rmse.png
+            01_sphere_vs_wgs84.ipynb

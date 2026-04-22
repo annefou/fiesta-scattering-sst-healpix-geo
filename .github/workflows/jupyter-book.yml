@@ -1,0 +1,64 @@
+name: Build and Deploy Jupyter Book
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      CI_MODE: "1"
+      COPERNICUSMARINE_SERVICE_USERNAME: ${{ secrets.COPERNICUSMARINE_SERVICE_USERNAME }}
+      COPERNICUSMARINE_SERVICE_PASSWORD: ${{ secrets.COPERNICUSMARINE_SERVICE_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Micromamba
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: environment.yml
+          environment-name: fiesta-sst-healpix
+          cache-environment: true
+
+      - name: Install MyST
+        shell: bash -el {0}
+        run: pip install mystmd
+
+      - name: Execute notebook
+        shell: bash -el {0}
+        run: |
+          jupytext --to notebook 01_sphere_vs_wgs84.py
+          jupyter execute 01_sphere_vs_wgs84.ipynb
+
+      - name: Build MyST site
+        shell: bash -el {0}
+        run: myst build --html
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _build/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

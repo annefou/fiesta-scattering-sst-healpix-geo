@@ -1,0 +1,20 @@
+name: fiesta-sst-healpix
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - healpy
+  - xarray
+  - scikit-learn
+  - matplotlib
+  - jupytext
+  - jupyter
+  - snakemake
+  - pip
+  - pip:
+      - copernicusmarine
+      - healpix-resample
+      - healpix-geo
+      - foscat
