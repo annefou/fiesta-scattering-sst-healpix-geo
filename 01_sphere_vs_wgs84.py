@@ -135,15 +135,20 @@ import xarray as xr
 sst_l4_2d = ds_l4["analysed_sst"].isel(time=0).values  # (lat, lon)
 mask_l4 = ~np.isnan(sst_l4_2d)
 
-# Check if grids match
-l3s_lat = ds_l3s.lat.values
-l4_lat = ds_l4.lat.values
-l3s_lon = ds_l3s.lon.values
-l4_lon = ds_l4.lon.values
+# Check if grids match — handle both lat/lon and latitude/longitude naming
+lat_name_l3s = "lat" if "lat" in ds_l3s.dims else "latitude"
+lon_name_l3s = "lon" if "lon" in ds_l3s.dims else "longitude"
+lat_name_l4 = "lat" if "lat" in ds_l4.dims else "latitude"
+lon_name_l4 = "lon" if "lon" in ds_l4.dims else "longitude"
+
+l3s_lat = ds_l3s[lat_name_l3s].values
+l4_lat = ds_l4[lat_name_l4].values
+l3s_lon = ds_l3s[lon_name_l3s].values
+l4_lon = ds_l4[lon_name_l4].values
 
 if l3s_lat.shape != l4_lat.shape or not np.allclose(l3s_lat, l4_lat, atol=0.01):
     print("Grids differ -- regridding L3S to L4 grid via interp")
-    ds_l3s_regrid = ds_l3s.interp(lat=l4_lat, lon=l4_lon, method="nearest")
+    ds_l3s_regrid = ds_l3s.interp({lat_name_l3s: l4_lat, lon_name_l3s: l4_lon}, method="nearest")
     sst_l3s_2d = ds_l3s_regrid["sea_surface_temperature"].isel(time=0).values
 else:
     print("Grids match")
@@ -236,8 +241,10 @@ def run_foscat(ellipsoid="sphere"):
     t0 = time.time()
 
     # --- 1. Resample to HEALPix ---
-    lat = ds_l4.lat.values
-    lon = ds_l4.lon.values
+    lat_name = "lat" if "lat" in ds_l4.dims else "latitude"
+    lon_name = "lon" if "lon" in ds_l4.dims else "longitude"
+    lat = ds_l4[lat_name].values
+    lon = ds_l4[lon_name].values
 
     hp_l4 = resample_to_healpix(sst_l4_2d, mask_l4, lat, lon, ellipsoid=ellipsoid)
     hp_l3s = resample_to_healpix(sst_l3s_2d, mask_l4, lat, lon, ellipsoid=ellipsoid)
