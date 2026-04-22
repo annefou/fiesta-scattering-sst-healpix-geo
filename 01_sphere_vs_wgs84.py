@@ -398,33 +398,32 @@ print(f"Results saved to {results_path}")
 # for both sphere and WGS84 geometries, and the L4 reference.
 
 # %%
-fig, axes = plt.subplots(2, 2, figsize=(14, 8))
-
 # Common color range from L4 reference
 vmin = np.nanmin(r_sphere["hp_l4"][r_sphere["gap_mask"]])
 vmax = np.nanmax(r_sphere["hp_l4"][r_sphere["gap_mask"]])
 
-# L3S input (with gaps)
+fig = plt.figure(figsize=(16, 10))
+
 hp.mollview(r_sphere["hp_l3s"], title="L3S SST (with cloud gaps)",
-            sub=(2, 2, 1), fig=fig.number, cmap="RdYlBu_r",
-            min=vmin, max=vmax, nest=True)
+            sub=(2, 2, 1), fig=fig, cmap="RdYlBu_r",
+            min=vmin, max=vmax, nest=True, hold=True)
 
-# Sphere gap-filled
-hp.mollview(r_sphere["hp_filled"], title=f"FOSCAT Sphere (RMSE={r_sphere['rmse_mk']:.1f} mK)",
-            sub=(2, 2, 2), fig=fig.number, cmap="RdYlBu_r",
-            min=vmin, max=vmax, nest=True)
+hp.mollview(r_sphere["hp_filled"],
+            title=f"FOSCAT Sphere\nRMSE = {r_sphere['rmse_mk']:.1f} mK",
+            sub=(2, 2, 2), fig=fig, cmap="RdYlBu_r",
+            min=vmin, max=vmax, nest=True, hold=True)
 
-# WGS84 gap-filled
-hp.mollview(r_wgs84["hp_filled"], title=f"FOSCAT WGS84 (RMSE={r_wgs84['rmse_mk']:.1f} mK)",
-            sub=(2, 2, 3), fig=fig.number, cmap="RdYlBu_r",
-            min=vmin, max=vmax, nest=True)
+hp.mollview(r_wgs84["hp_filled"],
+            title=f"FOSCAT WGS84\nRMSE = {r_wgs84['rmse_mk']:.1f} mK",
+            sub=(2, 2, 3), fig=fig, cmap="RdYlBu_r",
+            min=vmin, max=vmax, nest=True, hold=True)
 
-# L4 reference
 hp.mollview(r_sphere["hp_l4"], title="L4 Reference (gap-free)",
-            sub=(2, 2, 4), fig=fig.number, cmap="RdYlBu_r",
-            min=vmin, max=vmax, nest=True)
+            sub=(2, 2, 4), fig=fig, cmap="RdYlBu_r",
+            min=vmin, max=vmax, nest=True, hold=True)
 
-fig.suptitle(f"SST Gap-Filling: Sphere vs WGS84 — {DATE}, NSIDE={NSIDE}", fontsize=14, y=1.02)
+fig.subplots_adjust(hspace=0.3, wspace=0.05, top=0.92)
+fig.suptitle(f"SST Gap-Filling: Sphere vs WGS84 — {DATE}, NSIDE={NSIDE}", fontsize=14)
 fig.savefig(os.path.join("results", "comparison_maps.png"), dpi=150, bbox_inches="tight")
 plt.show()
 
