@@ -279,22 +279,32 @@ def run_foscat(ellipsoid="sphere"):
     hp_l4_clean = hp_l4.copy()
     hp_l4_clean[np.isnan(hp_l4_clean)] = 0.0
 
-    scat_op = sc.funct(NORIENT=4, KERNELSZ=3, all_type="float64")
-    ref_cov = scat_op.eval(hp_l4_clean)
+    scat_op = sc.funct(NORIENT=4, KERNELSZ=3, all_type="float64", silent=True)
 
-    # Define loss mask: we want to match statistics everywhere on ocean
-    loss_mask = ocean.astype("float64")
+    data = hp_start.reshape(1, NPIX).astype(np.float64)
+    mask_ocean = ocean.reshape(1, NPIX).astype(np.float64)
 
-    # Run synthesis
-    synthesizer = synth.Synthesis(
-        scat_operator=scat_op,
-        target_cov=ref_cov,
-        image_init=hp_start,
-        mask=loss_mask,
-        fix_mask=(~clouds).astype("float64"),  # fix non-gap pixels
-        n_step=NSTEPS,
+    # Reference from L4 gap-free product
+    ref, sref = scat_op.eval(
+        hp_l4_clean.reshape(1, NPIX).astype(np.float64),
+        mask=mask_ocean, calc_var=True
     )
-    hp_filled = synthesizer.run()
+
+    def The_loss(x, scat_operator, args):
+        ref, mask, sref = args[0], args[1], args[2]
+        learn = scat_operator.eval(x, mask=mask)
+        loss = scat_operator.reduce_mean(scat_operator.square((ref - learn) / sref))
+        return loss
+
+    mask_const = scat_op.backend.constant(scat_op.backend.bk_cast(mask_ocean))
+    loss = synth.Loss(The_loss, scat_op, ref, mask_const, sref)
+    sy = synth.Synthesis([loss])
+
+    mask_clouds_t = scat_op.backend.bk_cast(clouds.reshape(1, NPIX).astype(np.float64))
+
+    omap = sy.run(scat_op.backend.bk_cast(data), EVAL_FREQUENCY=max(NSTEPS//10, 1),
+                  grd_mask=mask_clouds_t, NUM_EPOCHS=NSTEPS, do_lbfgs=True)
+    hp_filled = np.array(omap).ravel() if not hasattr(omap, 'numpy') else omap.numpy().ravel()
 
     elapsed = time.time() - t0
 
