@@ -202,12 +202,11 @@ def resample_to_healpix(data_2d, mask_2d, lat, lon, ellipsoid="sphere"):
         reduce="mean",
         ellipsoid=ellipsoid,
     )
-    hp_partial = resampler.fit_transform(values)
+    result = resampler.resample(values)
 
     # Build full-size map
     hp_map = np.full(NPIX, np.nan)
-    pixel_indices = resampler.pixel_indices_
-    hp_map[pixel_indices] = hp_partial
+    hp_map[result.cell_ids] = result.cell_data
 
     return hp_map
 
