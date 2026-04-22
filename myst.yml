@@ -22,7 +22,7 @@ project:
   bibliography: []
   toc:
     - file: index.md
-    - file: 01_sphere_vs_wgs84.py
+    - file: 01_sphere_vs_wgs84.ipynb
 
 site:
   title: "SST Gap-Filling: Sphere vs WGS84"
