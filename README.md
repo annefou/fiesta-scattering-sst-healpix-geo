@@ -1,5 +1,9 @@
 # SST Gap-Filling: Sphere vs WGS84 Ellipsoid on HEALPix
 
+[![Source DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19693573.svg)](https://doi.org/10.5281/zenodo.19693573)
+[![Docker image DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19707991.svg)](https://doi.org/10.5281/zenodo.19707991)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Does accounting for the WGS84 ellipsoid geometry when resampling sea-surface
 temperature (SST) data to HEALPix improve the accuracy of scattering-transform
 gap-filling compared to the standard spherical assumption?
@@ -105,6 +109,47 @@ a fallback when CUDA is not available.
 Delouis, J.-M. et al. (2022). "Scattering transform applied to CMB
 component separation." *Astronomy & Astrophysics*, 668, A122.
 [DOI:10.1051/0004-6361/202244566](https://doi.org/10.1051/0004-6361/202244566)
+
+## Container image
+
+A Docker container is built on every release, pushed to GitHub Container
+Registry, and archived to Zenodo.
+
+```bash
+docker pull ghcr.io/annefou/fiesta-scattering-sst-healpix-geo:latest
+docker run --rm -v "$PWD/results:/app/results" \
+    -e COPERNICUSMARINE_SERVICE_USERNAME=... \
+    -e COPERNICUSMARINE_SERVICE_PASSWORD=... \
+    ghcr.io/annefou/fiesta-scattering-sst-healpix-geo:latest
+```
+
+Zenodo-archived tarballs via the
+[Docker image concept DOI 10.5281/zenodo.19707991](https://doi.org/10.5281/zenodo.19707991).
+
+## How to cite
+
+```
+Fouilloux, A. (2026). SST Gap-Filling: Sphere vs WGS84 Ellipsoid on HEALPix
+(v0.2.1). Zenodo. https://doi.org/10.5281/zenodo.19693573
+```
+
+BibTeX:
+
+```bibtex
+@software{fouilloux_fiesta_scattering_sst_healpix_geo,
+  author    = {Fouilloux, Anne},
+  title     = {SST Gap-Filling: Sphere vs WGS84 Ellipsoid on HEALPix},
+  year      = {2026},
+  version   = {0.2.1},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.19693573},
+  url       = {https://doi.org/10.5281/zenodo.19693573}
+}
+```
+
+The DOI above is the **concept DOI** — it always resolves to the latest
+release. See [`CITATION.cff`](CITATION.cff) for machine-readable citation
+metadata.
 
 ## Credits
 
