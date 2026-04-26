@@ -30,6 +30,34 @@ We compare FOSCAT gap-filling RMSE (vs Copernicus Marine L4 reference) using:
 
 See the full analysis in {doc}`01_sphere_vs_wgs84`.
 
+## FORRT nanopublication chain
+
+The full provenance of this question-rooted study is recorded as a six-step
+FORRT nanopublication chain on the
+[Science Live](https://platform.sciencelive4all.org) platform — research
+question → declarative answer → FORRT claim → study → outcome → CiTO
+citations. Each step is independently citable and machine-readable.
+
+> **Headline assertion — machine-readable:**
+> [**This work `cito:extends` chain #3 (`fiesta-scattering-sst`), `cito:usesMethodIn` Delouis et al. 2022, AND `cito:credits` the IGARSS 2024 Pangeo tutorial**](https://w3id.org/sciencelive/np/RAFe7IfYuLYqNUYbtxUrRmk2D5JhyoWJjwY5iytqdzM5g)
+>
+> Three relationships in one citation nanopublication: extends the
+> sphere-only baseline at chain #3 to operational resolution with the
+> sphere-vs-WGS84 comparison; uses the FOSCAT scattering method from
+> Delouis 2022; credits Jean-Marc Delouis's IGARSS 2024 Pangeo tutorial
+> as the SST workflow source.
+
+The five preceding nanopubs build the provenance ladder up to that citation:
+
+| Step | Type | Nanopub URI |
+|---|---|---|
+| 1 | PCC Research Question | <https://w3id.org/sciencelive/np/RA9hvGhxFk1QOqFhSAUKzWbIyE0sdRduQgQOIzdVZvHJo> |
+| 2 | AIDA sentence *(Nanodash namespace)* | <https://w3id.org/np/RA0P2dPFtPiyzW7uHgmAf_nBcwnUtAEYYpDV1Wkko8dC4> |
+| 3 | FORRT Claim (data quality) | <https://w3id.org/sciencelive/np/RAMDVUPB2XRLXYwtggM0GXIRqhavuPaaRHmVezbsxtdS0> |
+| 4 | FORRT Replication Study | <https://w3id.org/sciencelive/np/RA0vq7OGc7G5we208CYmsu_3De-9IY0BN0yCLcXYBGBFA> |
+| 5 | FORRT Replication Outcome (Validated, Moderate) | <https://w3id.org/sciencelive/np/RAs--Uf0wMFAWeTv54c4P37QYNp70c8nxUY9M6HgOfg4c> |
+| 6 | **CiTO `extends` chain #3 + `usesMethodIn` Delouis 2022 + `credits` IGARSS 2024 tutorial** | **<https://w3id.org/sciencelive/np/RAFe7IfYuLYqNUYbtxUrRmk2D5JhyoWJjwY5iytqdzM5g>** |
+
 ## References
 
 - Delouis, J.-M. et al. (2022). *Astronomy & Astrophysics*, 668, A122.
