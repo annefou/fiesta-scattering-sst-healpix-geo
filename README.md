@@ -1,8 +1,14 @@
 # SST Gap-Filling: Sphere vs WGS84 Ellipsoid on HEALPix
 
+[![CI](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/actions/workflows/ci.yml/badge.svg)](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/actions/workflows/ci.yml)
+[![Jupyter Book](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/actions/workflows/jupyter-book.yml/badge.svg)](https://annefou.github.io/fiesta-scattering-sst-healpix-geo/)
+[![Docker](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/actions/workflows/docker.yml/badge.svg)](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/pkgs/container/fiesta-scattering-sst-healpix-geo)
 [![Source DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19693573.svg)](https://doi.org/10.5281/zenodo.19693573)
 [![Docker image DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19707991.svg)](https://doi.org/10.5281/zenodo.19707991)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![FAIR4RS](https://img.shields.io/badge/FAIR4RS-conformant-brightgreen)](https://doi.org/10.15497/RDA00068)
+[![FORRT](https://img.shields.io/badge/FORRT-replication-blue)](https://forrt.org/)
+[![Science Live](https://img.shields.io/badge/Science%20Live-nanopub%20chain-purple)](https://w3id.org/sciencelive/np/RAs--Uf0wMFAWeTv54c4P37QYNp70c8nxUY9M6HgOfg4c)
 
 Does accounting for the WGS84 ellipsoid geometry when resampling sea-surface
 temperature (SST) data to HEALPix improve the accuracy of scattering-transform
