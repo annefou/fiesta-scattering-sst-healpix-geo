@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/actions/workflows/ci.yml/badge.svg)](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/actions/workflows/ci.yml)
 [![Jupyter Book](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/actions/workflows/jupyter-book.yml/badge.svg)](https://annefou.github.io/fiesta-scattering-sst-healpix-geo/)
-[![Docker](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/actions/workflows/docker.yml/badge.svg)](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/pkgs/container/fiesta-scattering-sst-healpix-geo)
+[![Docker](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/actions/workflows/docker.yml/badge.svg?event=release)](https://github.com/annefou/fiesta-scattering-sst-healpix-geo/pkgs/container/fiesta-scattering-sst-healpix-geo)
 [![Source DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19693573.svg)](https://doi.org/10.5281/zenodo.19693573)
 [![Docker image DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19707991.svg)](https://doi.org/10.5281/zenodo.19707991)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
