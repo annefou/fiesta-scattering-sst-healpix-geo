@@ -60,9 +60,10 @@ DATE = "2026-04-01"
 
 CI_MODE = os.environ.get("CI_MODE", "0") == "1"
 
+# LEVEL is the GRID4EARTH 'depth' (nside = 2**LEVEL): nside=16 -> depth 4, nside=32 -> depth 5.
 if CI_MODE:
     NSIDE = 16
-    LEVEL = 4       # HEALPix level for healpix-resample (2^level = NSIDE)
+    LEVEL = 4       # HEALPix level / GRID4EARTH depth for healpix-resample (2^level = NSIDE)
     NSTEPS = 20
     LMAX = 15
     print("Running in CI mode (low resolution)")
@@ -186,7 +187,7 @@ def resample_to_healpix(data_2d, mask_2d, lat, lon, ellipsoid="sphere"):
     Returns
     -------
     hp_map : ndarray (npix,)
-        HEALPix map with NaN for empty pixels.
+        HEALPix map with NaN for empty cells.
     """
     lon_grid, lat_grid = np.meshgrid(lon, lat)
     valid = mask_2d & ~np.isnan(data_2d)
@@ -215,10 +216,10 @@ def resample_to_healpix(data_2d, mask_2d, lat, lon, ellipsoid="sphere"):
 #
 # We define a function that:
 # 1. Resamples L4 and L3S to HEALPix with the chosen ellipsoid.
-# 2. Identifies ocean, observed, and cloud-gap pixels.
+# 2. Identifies ocean, observed, and cloud-gap cells.
 # 3. Computes a spherical-harmonics baseline for the gaps.
 # 4. Runs FOSCAT scattering-transform synthesis to fill the gaps.
-# 5. Evaluates RMSE against the L4 reference on the gap pixels.
+# 5. Evaluates RMSE against the L4 reference on the gap cells.
 
 # %%
 import foscat.scat_cov as sc
@@ -250,14 +251,14 @@ def run_foscat(ellipsoid="sphere"):
 
     ocean = ~np.isnan(hp_l4)
     observed = ~np.isnan(hp_l3s)
-    clouds = ocean & ~observed  # gap pixels (ocean but not observed)
+    clouds = ocean & ~observed  # gap cells (ocean but not observed)
 
     n_ocean = ocean.sum()
     n_obs = observed.sum()
     n_gap = clouds.sum()
-    print(f"  Ocean pixels:    {n_ocean}")
-    print(f"  Observed pixels: {n_obs}")
-    print(f"  Gap pixels:      {n_gap} ({100*n_gap/n_ocean:.1f}%)")
+    print(f"  Ocean cells:    {n_ocean}")
+    print(f"  Observed cells: {n_obs}")
+    print(f"  Gap cells:      {n_gap} ({100*n_gap/n_ocean:.1f}%)")
 
     # --- 2. Spherical-harmonics baseline for gaps ---
     ocean_mean = np.nanmean(hp_l4[ocean])
@@ -269,9 +270,9 @@ def run_foscat(ellipsoid="sphere"):
     alm = hp.map2alm(hp_for_alm, lmax=LMAX)
     baseline = hp.alm2map(alm, NSIDE, verbose=False)
 
-    # Use baseline to fill gap pixels as initial guess
+    # Use baseline to fill gap cells as initial guess
     hp_start[clouds] = baseline[clouds]
-    # Set non-ocean pixels to ocean mean (not 0 — SST is ~270-304 K)
+    # Set non-ocean cells to ocean mean (not 0 — SST is ~270-304 K)
     hp_start[~ocean] = ocean_mean
     hp_start[np.isnan(hp_start)] = ocean_mean
 
@@ -308,12 +309,12 @@ def run_foscat(ellipsoid="sphere"):
     omap = sy.run(scat_op.backend.bk_cast(data), EVAL_FREQUENCY=max(NSTEPS//10, 1),
                   grd_mask=mask_clouds_t, NUM_EPOCHS=NSTEPS, do_lbfgs=True)
     hp_filled = np.array(omap).ravel() if not hasattr(omap, 'numpy') else omap.numpy().ravel()
-    # Mask land pixels as NaN for clean visualisation
+    # Mask land cells as NaN for clean visualisation
     hp_filled[~ocean] = np.nan
 
     elapsed = time.time() - t0
 
-    # --- 4. RMSE on gap pixels ---
+    # --- 4. RMSE on gap cells ---
     diff = hp_filled[clouds] - hp_l4[clouds]
     rmse = np.sqrt(np.nanmean(diff ** 2))
     rmse_mk = rmse * 1000  # convert K to mK
