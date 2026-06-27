@@ -18,7 +18,7 @@ extend HEALPix to the WGS84 ellipsoid.
 
 For CMB analysis on the celestial sphere, the spherical assumption is exact.
 For Earth-observation data like SST, the mismatch between sphere and ellipsoid
-could introduce systematic biases in pixel areas and neighbour relationships,
+could introduce systematic biases in HEALPix cell areas and neighbour relationships,
 potentially degrading gap-filling quality.
 
 ## Experiment

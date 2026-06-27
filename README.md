@@ -29,6 +29,8 @@ Analysis Tool) on HEALPix grids and compare two geometries:
 We evaluate gap-filled SST against the Copernicus Marine L4 analysis (gap-free
 reference) using RMSE on the gap pixels.
 
+> **HEALPix terminology (GRID4EARTH).** This study indexes data on HEALPix via [`healpix-resample`](https://github.com/GRID4EARTH/healpix-resample), which builds on the GRID4EARTH core library [`healpix-geo`](https://healpix-geo.readthedocs.io/). In GRID4EARTH vocabulary the resolution is **`depth`** (`nside = 2**depth`; the code's `LEVEL` is this `depth`, e.g. nside=32 → depth 5). HEALPix bins are **cells** (a `uint64` **`ipix`** index) in **NESTED** ordering; the WGS84-vs-sphere comparison at the heart of this study is exactly the **ellipsoidal** (`ellipsoid="WGS84"`, authalic-sphere) path `healpix-geo` provides.
+
 ## Method
 
 1. Download L3S (gappy) and L4 (reference) SST from Copernicus Marine Service.
