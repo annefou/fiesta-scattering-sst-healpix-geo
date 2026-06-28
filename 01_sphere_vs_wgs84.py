@@ -87,14 +87,65 @@ print(f"NSIDE={NSIDE}, LEVEL={LEVEL}, NPIX={NPIX}, NSTEPS={NSTEPS}, LMAX={LMAX}"
 # %%
 import copernicusmarine
 
+
+def _synthetic_sst_data(date_str):
+    """Deterministic synthetic stand-in for the Copernicus Marine SST products.
+
+    Returns two datasets with exactly the structure of the real products — a
+    gap-free ``analysed_sst`` (the L4 reference) and a ``sea_surface_temperature``
+    field punched with large contiguous "cloud" gaps (the L3S observations) — so
+    the gap-filling pipeline below runs end to end with **no network access and
+    no authentication**. Used only in CI (``CI_MODE``); real runs download the
+    genuine fields. The field is smooth and physically plausible (warm equator,
+    cold poles, gentle zonal structure) — enough for the scattering transform to
+    work on and to leave genuine ocean gap cells to reconstruct.
+    """
+    import xarray as xr
+
+    lat = np.arange(-89.5, 90.0, 1.0)
+    lon = np.arange(-179.5, 180.0, 1.0)
+    lat_grid, lon_grid = np.meshgrid(lat, lon, indexing="ij")
+
+    sst = (
+        273.15
+        + 27.0 * np.cos(np.deg2rad(lat_grid))                                    # equator-to-pole gradient (K)
+        + 2.5 * np.sin(np.deg2rad(3.0 * lon_grid)) * np.cos(np.deg2rad(lat_grid))  # zonal waves
+        + 1.5 * np.cos(np.deg2rad(2.0 * lat_grid))                                # extra structure
+    )
+
+    # A simple landmass -> NaN, so the ocean mask is non-trivial.
+    land = (lon_grid > -100.0) & (lon_grid < -30.0) & (lat_grid > -10.0) & (lat_grid < 55.0)
+    l4 = np.where(land, np.nan, sst)
+
+    # Large, contiguous "cloud" gaps in the L3S product: whole HEALPix cells fall
+    # inside a patch, so there are real gap cells (ocean but unobserved) to fill.
+    gaps = np.sin(np.deg2rad(2.5 * lat_grid + 40.0)) * np.cos(np.deg2rad(1.5 * lon_grid)) > 0.35
+    l3s = np.where(land | gaps, np.nan, sst)
+
+    coords = {"time": np.array([np.datetime64(date_str)]), "lat": lat, "lon": lon}
+    ds_l4 = xr.Dataset({"analysed_sst": (("time", "lat", "lon"), l4[None])}, coords=coords)
+    ds_l3s = xr.Dataset(
+        {"sea_surface_temperature": (("time", "lat", "lon"), l3s[None])}, coords=coords
+    )
+    return ds_l3s, ds_l4
+
+
 def load_sst_data(date_str):
     """Download L3S and L4 SST for a single day.
 
     The two global single-day fields are cached locally as netCDF under data/,
     so re-runs (e.g. CI) don't re-hit Copernicus Marine — only a cache miss
     calls copernicusmarine (and therefore needs authentication).
+
+    In CI (``CI_MODE``) we skip Copernicus entirely and use a deterministic
+    synthetic field, so the smoke test never depends on Copernicus Marine's
+    authentication system being reachable.
     """
     import xarray as xr
+
+    if CI_MODE:
+        print(f"CI mode: using synthetic SST for {date_str} (no Copernicus Marine access)")
+        return _synthetic_sst_data(date_str)
 
     os.makedirs("data", exist_ok=True)
     l3s_path = os.path.join("data", f"sst_l3s_{date_str}.nc")
