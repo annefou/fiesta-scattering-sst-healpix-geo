@@ -88,7 +88,21 @@ print(f"NSIDE={NSIDE}, LEVEL={LEVEL}, NPIX={NPIX}, NSTEPS={NSTEPS}, LMAX={LMAX}"
 import copernicusmarine
 
 def load_sst_data(date_str):
-    """Download L3S and L4 SST for a single day."""
+    """Download L3S and L4 SST for a single day.
+
+    The two global single-day fields are cached locally as netCDF under data/,
+    so re-runs (e.g. CI) don't re-hit Copernicus Marine — only a cache miss
+    calls copernicusmarine (and therefore needs authentication).
+    """
+    import xarray as xr
+
+    os.makedirs("data", exist_ok=True)
+    l3s_path = os.path.join("data", f"sst_l3s_{date_str}.nc")
+    l4_path = os.path.join("data", f"sst_l4_{date_str}.nc")
+    if os.path.exists(l3s_path) and os.path.exists(l4_path):
+        print(f"Loading cached SST for {date_str} from data/")
+        return xr.open_dataset(l3s_path), xr.open_dataset(l4_path)
+
     date_start = date_str
     date_end = date_str
 
@@ -116,7 +130,10 @@ def load_sst_data(date_str):
         end_datetime=f"{date_end}T23:59:59",
     )
 
-    return ds_l3s, ds_l4
+    # Persist to the local cache so subsequent runs skip the download.
+    ds_l3s.load().to_netcdf(l3s_path)
+    ds_l4.load().to_netcdf(l4_path)
+    return xr.open_dataset(l3s_path), xr.open_dataset(l4_path)
 
 
 ds_l3s, ds_l4 = load_sst_data(DATE)
