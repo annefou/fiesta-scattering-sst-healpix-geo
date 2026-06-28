@@ -26,6 +26,8 @@ project:
 
 site:
   title: "SST Gap-Filling: Sphere vs WGS84"
+  options:
+    favicon: favicon.png
   actions:
     - title: GitHub
       url: https://github.com/annefou/fiesta-scattering-sst-healpix-geo
