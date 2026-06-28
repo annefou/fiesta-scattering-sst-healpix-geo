@@ -11,9 +11,10 @@ jobs:
   experiment:
     runs-on: ubuntu-latest
     env:
+      # CI is hermetic: in CI_MODE the notebook uses a deterministic synthetic
+      # SST field instead of downloading from Copernicus Marine, so the smoke
+      # test needs no credentials and never depends on Copernicus auth uptime.
       CI_MODE: "1"
-      COPERNICUSMARINE_SERVICE_USERNAME: ${{ secrets.COPERNICUSMARINE_SERVICE_USERNAME }}
-      COPERNICUSMARINE_SERVICE_PASSWORD: ${{ secrets.COPERNICUSMARINE_SERVICE_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v4
@@ -25,13 +26,6 @@ jobs:
           environment-name: fiesta-sst-healpix
           init-shell: bash
           cache-environment: true
-
-      - name: Setup Copernicus Marine credentials
-        run: |
-          mkdir -p ~/.copernicusmarine
-          echo "[credentials]
-          username=${COPERNICUSMARINE_SERVICE_USERNAME}
-          password=${COPERNICUSMARINE_SERVICE_PASSWORD}" | base64 > ~/.copernicusmarine/.copernicusmarine-credentials
 
       - name: Run experiment
         shell: micromamba-shell {0}
