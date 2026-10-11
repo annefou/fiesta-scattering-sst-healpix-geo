@@ -38,3 +38,6 @@ results/*
 
 # Snakemake
 .snakemake/
+
+# Cached Copernicus SST downloads (see load_sst_data / jupyter-book.yml cache)
+data/

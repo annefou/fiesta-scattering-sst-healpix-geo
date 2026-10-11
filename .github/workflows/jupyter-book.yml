@@ -39,18 +39,31 @@ jobs:
       - name: Install MyST
         run: npm install -g mystmd
 
-      - name: Setup Copernicus Marine credentials
-        run: |
-          mkdir -p ~/.copernicusmarine
-          echo "[credentials]
-          username=${COPERNICUSMARINE_SERVICE_USERNAME}
-          password=${COPERNICUSMARINE_SERVICE_PASSWORD}" | base64 > ~/.copernicusmarine/.copernicusmarine-credentials
+      # Copernicus Marine auth is handled by the job-level env vars above
+      # (COPERNICUSMARINE_SERVICE_USERNAME / _PASSWORD), which copernicusmarine
+      # 2.x reads directly. No credentials file is needed — the previous step
+      # here wrote a base64-encoded (i.e. unreadable) ~/.copernicusmarine file.
 
-      - name: Execute notebook
+      # Cache the downloaded SST so re-runs don't re-hit Copernicus Marine.
+      # Keyed on the notebook (which pins DATE) — a cache hit means the notebook
+      # loads data/ locally and never calls copernicusmarine (no auth needed).
+      - name: Cache Copernicus SST data
+        uses: actions/cache@v4
+        with:
+          path: data
+          key: sst-data-${{ hashFiles('01_sphere_vs_wgs84.py') }}
+
+      - name: Execute notebook (retry transient Copernicus auth blips)
         shell: micromamba-shell {0}
         run: |
           jupytext --to notebook 01_sphere_vs_wgs84.py
-          jupyter execute --inplace 01_sphere_vs_wgs84.ipynb
+          ok=0
+          for attempt in 1 2 3; do
+            if jupyter execute --inplace 01_sphere_vs_wgs84.ipynb; then ok=1; break; fi
+            echo "::warning::notebook execution attempt $attempt failed (likely a transient Copernicus auth blip); retrying in 30s"
+            sleep 30
+          done
+          [ "$ok" = 1 ] || { echo "::error::notebook execution failed after 3 attempts"; exit 1; }
 
       - name: Build MyST site
         shell: micromamba-shell {0}
